@@ -38,6 +38,8 @@ class API:  # pylint: disable=too-many-instance-attributes
         )
 
         self._retry_on_401 = False
+        self._user_id = auth_resp["data"]["user_id"]
+        self._email = auth_resp["data"]["email"] # use email from api since mqtt is case sensitive
         self._token = auth_resp["data"]["auth_token"]
         self._token_expiration = datetime.fromtimestamp(
             auth_resp["data"]["token_expires_at"]
@@ -114,7 +116,12 @@ class API:  # pylint: disable=too-many-instance-attributes
                 raise RequestError(
                     f"There was an unknown error while requesting {endpoint}: {err}"
                 ) from None
-
+    @property
+    def user_id(self):
+        return self._user_id
+    @property
+    def email(self):
+        return self._email
 
 def _raise_on_error(data: dict) -> None:
     """Raise appropriately when a returned data payload contains an error."""
